@@ -1,6 +1,5 @@
 const User = require('../models/User');
-
-const { restart } = require('nodemon');
+const bcrypt = require('bcryptjs');
 
 exports.register = async (req, res, next) => {
   const { email, password } = req.body;
@@ -12,15 +11,16 @@ exports.register = async (req, res, next) => {
     validationErrors.push({
       code: 'VALIDATION_ERROR',
       field: 'email',
-      message: 'You must provide an email address.'
+      message: ' You must provide an email address'
     });
   }
 
-  if (email && !validateEmail(email)) {
+  const isEmailValid = email && validateEmail(email);
+  if (email && !isEmailValid) {
     validationErrors.push({
       code: 'VALIDATION_ERROR',
       field: 'email',
-      message: 'Email is not valid.'
+      message: 'Email is not valid'
     });
   }
 
@@ -28,7 +28,7 @@ exports.register = async (req, res, next) => {
     validationErrors.push({
       code: 'VALIDATION_ERROR',
       field: 'password',
-      message: 'You must provide a password.'
+      message: ' You must provide a password'
     });
   }
 
@@ -38,43 +38,36 @@ exports.register = async (req, res, next) => {
       errors: validationErrors
     };
 
-    res.send(errorObject);
+    res.status(422).send(errorObject);
+
+    return;
   }
 
   // Save this info to DB
-  try {
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      const errorObject = {
-        error: true,
-        errors: [
-          {
-            code: 'VALIDATION_ERROR',
-            field: 'email',
-            message: 'Email already exists'
-          }
-        ]
-      };
 
-      res.status(422).send(errorObject);
-      return;
+  try {
+    let user = await User.findOne({ email });
+
+    if (user) {
+      return res.status(400).json({ errors: [{ msg: 'User already exists' }] });
     }
 
-    let user = new User({
+    user = new User({
       email,
       password
     });
 
-    const savedUser = await user.save();
+    const salt = await bcrypt.genSalt(10);
 
-    console.log('savedUser', savedUser);
+    user.password = await bcrypt.hash(password, salt);
+
+    await user.save();
 
     res.status(200).send({
-      user: savedUser
+      user
     });
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+  } catch (e) {
+    console.log('e ', e);
   }
 };
 
