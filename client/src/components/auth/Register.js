@@ -15,7 +15,35 @@ function Register() {
 
   const onSubmit = e => {
     e.preventDefault();
-    console.log(email, password);
+
+    // Submit email and password to server.
+    fetch('/api/register', {
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json'
+      },
+      credentials: 'same-origin',
+      method: 'POST',
+      body: JSON.stringify({
+        email,
+        password
+      })
+    })
+      .then(res => {
+        if (!res.ok) {
+          return res.json().then(err => {
+            throw err;
+          });
+        }
+        return res.json();
+      })
+      .then(results => {
+        // Here you should redirect to an onboarding page or a successfull login page.
+        console.log(results);
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   return (
