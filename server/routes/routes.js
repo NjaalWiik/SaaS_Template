@@ -1,4 +1,4 @@
-const { register } = require('../middleware/authController');
+const { register, login } = require('../middleware/authController');
 
 const addRoutes = app => {
   app.all('*', (req, res, next) => {
@@ -12,6 +12,7 @@ const addRoutes = app => {
 
   //app.post
   app.post('/api/register', register);
+  app.post('/api/login', login);
 };
 
 const routes = {

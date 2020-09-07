@@ -71,6 +71,51 @@ exports.register = async (req, res, next) => {
   }
 };
 
+exports.login = async (req, res, next) => {
+  const { email, password } = req.body;
+
+  // Validate the input fields
+  const validationErrors = [];
+
+  if (!email) {
+    validationErrors.push({
+      code: 'VALIDATION_ERROR',
+      field: 'email',
+      message: ' You must provide an email address'
+    });
+  }
+
+  const isEmailValid = email && validateEmail(email);
+  if (email && !isEmailValid) {
+    validationErrors.push({
+      code: 'VALIDATION_ERROR',
+      field: 'email',
+      message: 'Email is not valid'
+    });
+  }
+
+  if (!password) {
+    validationErrors.push({
+      code: 'VALIDATION_ERROR',
+      field: 'password',
+      message: ' You must provide a password'
+    });
+  }
+
+  if (validationErrors.length) {
+    const errorObject = {
+      error: true,
+      errors: validationErrors
+    };
+
+    res.status(422).send(errorObject);
+
+    return;
+  }
+
+  res.send('Success login');
+};
+
 function validateEmail(email) {
   const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
   return re.test(String(email).toLowerCase());
