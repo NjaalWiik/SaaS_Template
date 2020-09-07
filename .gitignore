@@ -1,4 +1,4 @@
 node_modules
-server/config/production.json
-server/config/default.json
+config/production.json
+config/default.json
 client/build
