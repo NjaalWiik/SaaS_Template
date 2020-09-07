@@ -1,9 +1,9 @@
 const express = require('express');
-const connectDB = require('./config/db');
+const connectDB = require('./server/config/db');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const routes = require('./routes/routes');
+const routes = require('./server/routes/routes');
 
 const app = express();
 

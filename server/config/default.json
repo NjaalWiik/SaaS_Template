@@ -1,0 +1,6 @@
+{
+  "mongoURI": "mongodb+srv://admin:admin@saas.r3xoa.mongodb.net/saas?retryWrites=true&w=majority",
+  "jwtSecret": "thisisasecrettoken",
+  "githubClientId": "854c586a62f1ab381dab",
+  "githubSecret": "1e3cb601348ac235f4b081c160595535f1517303"
+}
